@@ -18,13 +18,8 @@ def list_windows(authorization: AuthHeader = None):
     require_user(authorization)
     with connect() as conn:
         rows = conn.execute("SELECT * FROM windows ORDER BY id").fetchall()
-        # BUGFIX-10 埋雷：列表把 generation 展示成 +1 假抬代
-        items = []
-        for r in rows:
-            d = dict(r)
-            d["display_generation"] = int(d.get("generation") or 1) + 1
-            items.append(d)
-        return {"items": items}
+        # 世代账同源：列表直出库列世代，不做 +1 假抬代
+        return {"items": [dict(r) for r in rows]}
 
 
 @router.post("/api/windows")

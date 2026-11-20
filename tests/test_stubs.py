@@ -36,11 +36,12 @@ def test_hold_and_reopen_stubs():
     hid = r.json()["hold_id"]
     assert c.post(f"/api/holds/{hid}/release-stub", headers=h).json()["stub"] is True
     c.post("/api/windows/2/close", headers=h)
+    # 抬代修复卡（2026-11-21）择定甲路径「作废重算」，乙路径当日禁改口
     stub = c.post(
-        "/api/windows/2/reopen-stub", headers=h, json={"mode": "增量补丁"}
+        "/api/windows/2/reopen-stub", headers=h, json={"mode": "作废重算"}
     ).json()
     assert stub["stub"] is True
-    assert stub["mode"] == "增量补丁"
+    assert stub["mode"] == "作废重算"
     assert c.get("/api/reopen-ledger", headers=h).json()["items"]
 
 
